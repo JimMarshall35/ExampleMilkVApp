@@ -1,0 +1,44 @@
+name: Ubuntu CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# env:
+#   BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v5
+      with:
+        submodules: recursive
+
+    - name: Get Dependencies
+      run: |
+        sudo apt install build-essential
+
+    - name: Get Latest Host Tools Ref
+      run: |
+        git ls-remote https://github.com/milkv-duo/host-tools HEAD | cut -f1 > ./host_tools_ref.txt
+
+    - name: Cache host tools
+      uses: actions/cache@v4
+      with:
+        path: host-tools
+        key: ${{ hashFiles('./host_tools_ref.txt') }}
+
+    - name: Build
+      run: |
+        source ./envsetup.sh
+        make
+
+
+
+
