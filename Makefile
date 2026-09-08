@@ -1,5 +1,8 @@
 TARGET=helloworld
 
+PREFIX ?= /usr/local
+BINDIR = $(PREFIX)/bin
+
 ifeq (,$(TOOLCHAIN_PREFIX))
 $(error TOOLCHAIN_PREFIX is not set)
 endif
@@ -23,8 +26,14 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-.PHONY: clean
+install: $(TARGET)
+	install -d $(DESTDIR)$(BINDIR)
+	install -m 755 $(TARGET) $(DESTDIR)$(BINDIR)/$(TARGET)
+
 clean:
 	@rm *.o -rf
 	@rm $(OBJS) -rf
 	@rm $(TARGET)
+
+.PHONY: clean install
+

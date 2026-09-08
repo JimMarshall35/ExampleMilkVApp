@@ -38,7 +38,15 @@ jobs:
       run: |
         source ./envsetup.sh
         make
+        mkdir install
+        make install DESTDIR=./install
 
+    - name: Upload Installed App
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        path: |
+          ./install
 
 
 
